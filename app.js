@@ -20,12 +20,25 @@ async function GetPosts(url) {
 app.get("/api/posts", (req, res, next) => {
 
     const tag = req.query.tag;
+    if (typeof(tag) == "undefined") {
+        res.status(400);
+        res.json({
+            "error": "Tags parameter is required"
+        });
+        return
+    }
 
-    GetPosts(`someurl`)
+    GetPosts(`some url`)
     .then(function (response) {
         let posts = response.data.posts
         let sortBy = req.query.sortBy ? req.query.sortBy : "id" 
         let direction = req.query.direction ? req.query.direction: "asc"
+
+        if (sortBy != "id" && sortBy != "reads" && sortBy != "likes" && sortBy != "popularity") {
+            res.status(400)
+            res.json({"error": "sortBy parameter is invalid"})
+            return
+        }
 
         if (direction == "asc") {
             posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
