@@ -13,40 +13,66 @@ app.get("/api/ping", (req, res, next) => {
     })
 });
 
-async function GetPosts(url) {
-    return await axios.get(url)
+async function GetPosts(tag) {
+    return await axios.get(`someurl`)
+    .then(
+        function(response) {
+            console.log(response.data.posts.slice(0,5))
+            return response.data.posts
+
+            // if (direction == "asc") {
+            //     posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
+            // }
+            // else if (direction == "desc") {
+            //     posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
+            // }
+            // res.json(posts)
+        },
+        function(error) {
+            
+        }
+    )
 }
 
 app.get("/api/posts", (req, res, next) => {
 
-    const tag = req.query.tag;
-    if (typeof(tag) == "undefined") {
+    const tags = req.query.tags;
+    if (typeof(tags) == "undefined") {
         res.status(400);
         res.json({
             "error": "Tags parameter is required"
         });
         return
     }
+    let sortBy = req.query.sortBy ? req.query.sortBy : "id" 
+    let direction = req.query.direction ? req.query.direction: "asc"
 
-    GetPosts(`some url`)
-    .then(function (response) {
-        let posts = response.data.posts
-        let sortBy = req.query.sortBy ? req.query.sortBy : "id" 
-        let direction = req.query.direction ? req.query.direction: "asc"
+    if (sortBy != "id" && sortBy != "reads" && sortBy != "likes" && sortBy != "popularity") {
+        res.status(400)
+        res.json({"error": "sortBy parameter is invalid"})
+        return
+    }
 
-        if (sortBy != "id" && sortBy != "reads" && sortBy != "likes" && sortBy != "popularity") {
-            res.status(400)
-            res.json({"error": "sortBy parameter is invalid"})
-            return
+    tags.split(",").forEach(
+        function(tag) {
+            GetPosts(tag)
         }
+    )
+    // .then(function (response) {
+    //     let posts = response.data.posts
+    // })
 
-        if (direction == "asc") {
-            posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
-        }
-        else if (direction == "desc") {
-            posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
-        }
-        res.json(posts)
-    })
-    
+    posts = {"Me": 3}
+    // if (direction == "asc") {
+    //     posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
+    // }
+    // else if (direction == "desc") {
+    //     posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
+    // }
+    res.json(posts)
+
+
+    // 1: get posts from inside promise into a big array
+    // 2: sort outside the axios promise
+    // problem: My variables outside do not get resolved by the promise before they are hit
 });
