@@ -17,10 +17,6 @@ async function GetPosts(url) {
     return await axios.get(url)
 }
 
-function CompareBy(a, b, sortBy) {
-    return a[sortBy] < b[sortBy]
-}
-
 app.get("/api/posts", (req, res, next) => {
 
     const tag = req.query.tag;
@@ -28,12 +24,16 @@ app.get("/api/posts", (req, res, next) => {
     GetPosts(`someurl`)
     .then(function (response) {
         let posts = response.data.posts
-        let sortBy = req.query.sortBy
-        let direction = req.query.direction
+        let sortBy = req.query.sortBy ? req.query.sortBy : "id" 
+        let direction = req.query.direction ? req.query.direction: "asc"
 
-        posts.sort((a, b) => a[sortBy] < b[sortBy])
+        if (direction == "asc") {
+            posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
+        }
+        else if (direction == "desc") {
+            posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
+        }
         res.json(posts)
-
-    });
+    })
     
 });
