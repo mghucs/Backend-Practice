@@ -17,15 +17,22 @@ async function GetPosts(url) {
     return await axios.get(url)
 }
 
+function CompareBy(a, b, sortBy) {
+    return a[sortBy] < b[sortBy]
+}
+
 app.get("/api/posts", (req, res, next) => {
 
     const tag = req.query.tag;
 
-    GetPosts(`https://api.someapi?tag=${tag}`)
+    GetPosts(`someurl`)
     .then(function (response) {
         let posts = response.data.posts
+        let sortBy = req.query.sortBy
+        let direction = req.query.direction
 
-        return response.data.posts
+        posts.sort((a, b) => a[sortBy] < b[sortBy])
+        res.json(posts)
 
     });
     
