@@ -50,16 +50,14 @@ app.get("/api/posts", (req, res, next) => {
         .then(function(responses) {
             let all_posts = []
             responses.forEach((response) => {
-                // console.log("in", response.data.posts.slice(0,3))
-                all_posts.push(response.data.posts)
+                all_posts.push(...response.data.posts)
             })
-
-            // if (direction == "asc") {
-            //     all_posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
-            // }
-            // else if (direction == "desc") {
-            //     all_posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
-            // }
+            if (direction == "asc") {
+                all_posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
+            }
+            else if (direction == "desc") {
+                all_posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
+            }
             res.json(all_posts)
         })
     
