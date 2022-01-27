@@ -30,7 +30,9 @@ app.get("/api/posts", (req, res, next) => {
         sortBy != "id" &&
         sortBy != "reads" &&
         sortBy != "likes" &&
-        sortBy != "popularity"
+        sortBy != "popularity" &&
+        direction != "asc" &&
+        direction != "desc"
     ) {
         res.status(400);
         res.json({ error: "sortBy parameter is invalid" });
@@ -77,3 +79,13 @@ app.get("/api/posts", (req, res, next) => {
         res.json(all_posts);
     });
 });
+
+// test('single tag sorted by likes asc')
+// test('multiple tags sorted by id desc')
+// test('no sortBy or direction')
+// test('sortBy no direction')
+// test('direction desc and no sortBy')
+
+// test('no tags, throws error because no list of tags given')
+// test('invalid sortBy inputted')
+// test('invalid direction inputted')
