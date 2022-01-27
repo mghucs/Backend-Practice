@@ -52,17 +52,24 @@ app.get("/api/posts", (req, res, next) => {
             responses.forEach((response) => {
                 all_posts.push(...response.data.posts)
             })
+            let unique_all_posts = new Set()
+            // Transform objects into string for uniqueness check in a set
+            all_posts.forEach((post) => {
+                unique_all_posts.add(JSON.stringify(post))
+            })
+            
+            // Reparse the object strings for sorting
+            all_posts = [...unique_all_posts].map((post) => {
+                return JSON.parse(post)
+            })
+            
             if (direction == "asc") {
                 all_posts.sort((a, b) => a[sortBy] < b[sortBy] ? -1 : 1)
             }
             else if (direction == "desc") {
                 all_posts.sort((a, b) => a[sortBy] > b[sortBy] ? -1 : 1)
             }
+
             res.json(all_posts)
         })
-    
-
-    // 1: get posts from inside promise into a big array 
-    // 2: sort outside the axios promise 
-    // problem: My variables outside do not get resolved by the promise before they are hit
 });
